@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: drkiq
+  labels:
+    app: rails-app
+
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: drkiq
+        app: rails-app
+
+    spec:
+      containers:
+      - env:
+        - name: SECRET_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: token
+              key: password
+        envFrom:
+        - configMapRef:
+            name: drkiq-config
+        image: eslam14/instabug_task:v1
+        name: drkiq
+        ports:
+        - containerPort: 8000
+

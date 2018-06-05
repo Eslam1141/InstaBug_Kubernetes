@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup
+spec:
+  template:
+    metadata:
+      name: setup
+    spec:
+      containers:
+      - args:
+        - rake
+        - db:create
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-pass
+              key: password
+        envFrom:
+        - configMapRef:
+            name: drkiq-config
+
+        image: eslam14/instabug_task:v1
+        name: setup
+      restartPolicy: Never

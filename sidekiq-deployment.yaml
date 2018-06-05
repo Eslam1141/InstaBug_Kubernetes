@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sidekiq
+  labels:
+    app: rails-app
+
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: sidekiq
+        app: rails-app
+    spec:
+      containers:
+      - args:
+        - bundle
+        - exec
+        - sidekiq
+        - -C
+        - config/sidekiq.yml
+        env:
+        - name: SECRET_TOKEN
+          value: asecuretokenwouldnormallygohere
+        - name: WORKER_PROCESSES
+          value: "1"
+        - name: LISTEN_ON
+          value: 0.0.0.0:8000
+        - name: DATABASE_URL
+          value: postgresql://drkiq:yourpassword@postgres:5432/drkiq?encoding=utf8&pool=5&timeout=5000
+        - name: CACHE_URL
+          value: redis://redis:6379/0
+        - name: JOB_WORKER_URL
+          value: redis://redis:6379/0
+        image: eslam14/instabug_task:v1
+        name: sidekiq
